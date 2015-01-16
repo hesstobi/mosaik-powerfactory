@@ -11,6 +11,16 @@ import powerfactory as pf
 
 import mosaik_api
 
+META = {
+    'models': {
+        'ElmLod' : {
+            'public': True,
+            'params': ['loc_name'],
+            'attrs': ['plini'],
+        },
+    },
+}
+
 
 class PowerFactorySimulator(mosaik_api.Simulator)
 
