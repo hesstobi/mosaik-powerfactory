@@ -34,7 +34,7 @@ class PowerFactorySimulator(mosaik_api.Simulator)
 
 # Make it executable
 def main():
-    return mosaik_api.start_simulation(ExampleSim())
+    return mosaik_api.start_simulation(PowerFactorySimulator())
 
 
 if __name__ == '__main__':
