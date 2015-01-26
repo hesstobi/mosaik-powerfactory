@@ -20,6 +20,10 @@ META = {
             'attrs': ['plini'],
         },
     },
+    'extra_methods': [
+        "elements_of_model",
+        "num_elements_of_model"
+    ],
 }
 
 
@@ -49,6 +53,14 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         # this methode has to return the meta dict
         return self.meta
 
+
+    def elements_of_model(self, model, name="*"):
+        if self.pf.project is None:
+            raise Exception("You have to init the simulator first")
+        return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model))
+
+    def num_elements_of_model(self, model, name="*"):
+        return len(self.elements_of_model(model, name))
 
 
 
