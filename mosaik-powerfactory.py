@@ -12,6 +12,7 @@ import powerfactory
 import mosaik_api
 
 META = {
+    'api_version': '2.1.2',
     'models': {
         'ElmLod' : {
             'public': True,
