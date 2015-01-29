@@ -3,6 +3,8 @@
 Mosaik interface for Digisilent Powerfactory
 
 """
+from enum import Enum
+
 import sys
 import os
 os.environ["PATH"] = "C:\\Program Files\\DIgSILENT\\PowerFactory 15.2;" + os.environ["PATH"]
@@ -26,6 +28,10 @@ META = {
     ],
 }
 
+class PowerFacotyCommands(Enum):
+    CmdLdf = 1
+    CmdRms = 2
+
 
 class PowerFactorySimulator(mosaik_api.Simulator):
     def __init__(self):
@@ -36,16 +42,22 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         if self.pf is None:
             raise Exception("Starting PowerFactory application in engine mode failed")
 
-        # Set a eid_prefix
-        self.eid_prefix= 'PF_'
+        # Set the default simulation method
+        self.command = PowerFacotyCommands.CmdLdf
+
+        # Set the default step sizes
+        self.step_size = 1 #s
+        self.rms_step_size = 0.01 #s internal rms step size
 
         # Create the entities Container
         self.entities = {}  # Maps EIDs to model indices in PowerFactory
 
-    def init(self, sid, project_name ,eid_prefix=None):
-        # Option overwrite the eid_prefix
-        if eid_prefix is not None:
-            self.eid_prefix = eid_prefix
+    def init(self, sid, project_name , command = PowerFacotyCommands.CmdLdf, step_size = 1, rms_step_size = 0.01):
+
+        # Option overwrite the command
+        if command is not None:
+            self.command = command
+
         # Activate project in powerfactory
         if project_name is None:
             raise Exception("You have to provide the project_name for PowerFactory")
