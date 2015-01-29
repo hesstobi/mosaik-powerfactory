@@ -76,6 +76,36 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
 
 
+    def create(self, num, model, loc_name):
+
+        entities = []
+
+        # Get the elements name from powerfactory
+        elements = self.elements_of_model(model,loc_name)
+
+        # Errors:
+        if elements is None:
+            raise Exception("There is no model with the name %s.%s in your PowerFactory Model" % (loc_name,model))
+
+        if num != len(elements):
+            raise Exception("The number of models have to be the equal the models in your PowerFactor Model")
+
+        # Mapping Elements for Mosaik
+        for e in elements:
+            eid = e.loc_name
+            entities.append({'eid': eid, 'type': model})
+
+        return entities
+
+
+
+
+
+
+
+
+
+
 
 # Make it executable
 def main():
