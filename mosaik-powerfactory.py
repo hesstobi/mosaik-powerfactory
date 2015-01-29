@@ -69,7 +69,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
     def elements_of_model(self, model, name="*"):
         if self.pf.project is None:
             raise Exception("You have to init the simulator first")
-        return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model))
+        return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model),1,1)
 
     def num_elements_of_model(self, model, name="*"):
         return len(self.elements_of_model(model, name))
