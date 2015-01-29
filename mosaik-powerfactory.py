@@ -24,7 +24,8 @@ META = {
     },
     'extra_methods': [
         "elements_of_model",
-        "num_elements_of_model"
+        "num_elements_of_model",
+        "element_with_eid",
     ],
 }
 
@@ -71,6 +72,18 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             raise Exception("You have to init the simulator first")
         return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model),1,1)
 
+    def element_with_eid(self,eid):
+        if self.pf.project is None:
+            raise Exception("You have to init the simulator first")
+        element =  self.pf.GetCalcRelevantObjects(eid,1,1)
+        if element is empty:
+            raise Exception("No element with eid: %s" % eid)
+        if len(element) > 1:
+            raise Exception("Found more of one element with eid: %s" % eid)
+
+        return element[0]
+
+
     def num_elements_of_model(self, model, name="*"):
         return len(self.elements_of_model(model, name))
 
@@ -92,7 +105,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
         # Mapping Elements for Mosaik
         for e in elements:
-            eid = e.loc_name
+            eid = '%s.%s' % (e.loc_name, model)
             entities.append({'eid': eid, 'type': model})
 
         return entities
