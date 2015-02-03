@@ -29,9 +29,11 @@ META = {
     ],
 }
 
-class PowerFacotyCommands(Enum):
-    CmdLdf = 1
-    CmdRms = 2
+class PowerFactoryCommands(Enum):
+    balancedLoadFlow = 1
+    unbalancedLoadFlow = 2
+    rmsSimulation = 3
+    emtSimulation = 4
 
 
 class PowerFactorySimulator(mosaik_api.Simulator):
