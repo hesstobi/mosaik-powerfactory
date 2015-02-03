@@ -88,6 +88,23 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         if project_name is None:
             raise Exception("You have to provide the project_name for PowerFactory")
         self.pf.ActivateProject(project_name)
+
+        # Activate the study cae
+        if self.study_case is None:
+            # If there is no study_case given get the current study case
+            case = self.pf.GetActiveStudyCase()
+            self.study_case = case.loc_name
+        else:
+            cases = self.pf.GetProjectFolder('study').GetChildren(0,'%s.IntCase' % self.study_case)[0]
+            if cases is None:
+                raise Exception("There is no study case with the name %s in your PowerFactory project" % self.study_case)
+            else:
+                case = cases[0]
+                case.Activate()
+
+        # Set the ref_date_time to the study case
+        self.set_case_time(0)
+
         # this methode has to return the meta dict
         return self.meta
 
@@ -142,6 +159,13 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
 
 
+    def set_case_time(self,mosaik_time):
+        # Get the study case
+        case = self.pf.GetActiveStudyCase()
+        # Calculate the resulting date
+        dt = self.ref_date_time.replace(seconds=+mosaik_time)
+        # set the time with the unix time stamp
+        case.SetStudyTime(dt.float_timestamp)
 
 
 
