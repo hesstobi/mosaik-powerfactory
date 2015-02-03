@@ -94,15 +94,15 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
 
     def elements_of_model(self, model, name="*"):
-        if self.pf.project is None:
+        if self.pf.GetActiveProject is None:
             raise Exception("You have to init the simulator first")
         return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model),1,1)
 
     def element_with_eid(self,eid):
-        if self.pf.project is None:
+        if self.pf.GetActiveProject is None:
             raise Exception("You have to init the simulator first")
         element =  self.pf.GetCalcRelevantObjects(eid,1,1)
-        if element is empty:
+        if not element:
             raise Exception("No element with eid: %s" % eid)
         if len(element) > 1:
             raise Exception("Found more of one element with eid: %s" % eid)
