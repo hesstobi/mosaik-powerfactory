@@ -46,20 +46,43 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             raise Exception("Starting PowerFactory application in engine mode failed")
 
         # Set the default simulation method
-        self.command = PowerFacotyCommands.CmdLdf
+        self.command = PowerFactoryCommands.balancedLoadFlow
 
         # Set the default step sizes
-        self.step_size = 1 #s
-        self.rms_step_size = 0.01 #s internal rms step size
+        self.ldf_step_size = 900 #s
+        self.rms_step_size = 1 #s
+        self.rms_sim_step_size = 0.01 #s internal rms step size
+
+        # Set the default referenze time
+        self.ref_date_time = arrow.Arrow(2014,1,1,0,0,0,tzinfo=tz.tzlocal())
+
+        # Set the studdy case to none by default
+        self.study_case = None
 
         # Create the entities Container
         self.entities = {}  # Maps EIDs to model indices in PowerFactory
 
-    def init(self, sid, project_name , command = PowerFacotyCommands.CmdLdf, step_size = 1, rms_step_size = 0.01):
+    def init(self, sid, project_name , command = PowerFactoryCommands.balancedLoadFlow, ldf_step_size = 900, rms_step_size = 1, rms_sim_step_size = 0.01, study_case = None, ref_date_time =arrow.Arrow(2014,1,1,0,0,0,tzinfo=tz.tzlocal())):
 
         # Option overwrite the command
         if command is not None:
             self.command = command
+
+        # Option for simulation times
+        if ldf_step_size is not None:
+            self.ldf_step_size = ldf_step_size
+        if rms_step_size is not None:
+            self.rms_step_size = rms_step_size
+        if rms_sim_step_size is not None:
+            self.rms_sim_step_size = rms_sim_step_size
+
+        # Option overwrite study_case
+        if study_case is not None:
+            self.study_case = study_case
+
+        # Option overwrite ref_date_time
+        if ref_date_time is not None:
+            self.ref_date_time = ref_date_time
 
         # Activate project in powerfactory
         if project_name is None:
