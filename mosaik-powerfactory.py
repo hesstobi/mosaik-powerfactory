@@ -1,39 +1,41 @@
-# mosaik-powerfacoty.py
-"""
-Mosaik interface for Digisilent Powerfactory
+# mosaik_powerfacoty.py
 
-"""
-import sys
-import os
-os.environ["PATH"] = "C:\\Program Files\\DIgSILENT\\PowerFactory 15.2;" + os.environ["PATH"]
-sys.path.append("C:\\Program Files\\DIgSILENT\\PowerFactory 15.2\\python\\3.4")
+import powerfactory_tools
 import powerfactory
-
 import mosaik_api
+
 import arrow
-from dateutil import tz
 import abc
 
 META = {
-    'api_version': '2.1.2',
     'models': {
-        'ElmLod' : {
+        'ElmNet' : {
             'public': True,
             'params': ['loc_name'],
-            'attrs': ['plini'],
+            'attrs': [],
         },
     },
-    'extra_methods': [
-        "elements_of_model",
-        "num_elements_of_model",
-        "element_with_eid",
-    ],
+    'extra_methods': [],
 }
 
 class PowerFactorySimulator(mosaik_api.Simulator):
+    """Abstract Mosaik interface for Digisilent Powerfactory
+
+
+
+    """
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
+        """Constructor of the PowerFactorySimulator
+
+        Creates an instance of the PowerFactorySimulation with the default
+        option set. It also starts powerfactory in engine mode.
+
+        Returns:
+            A Instance of PowerFacotrySimulator
+
+        """
         # Init the Metadata in the Super Class
         super().__init__(META)
         # Init Power Facotry
@@ -45,7 +47,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.step_size = 1 #s
 
         # Set the default referenze time
-        self.ref_date_time = arrow.Arrow(2014,1,1,0,0,0,tzinfo=tz.tzlocal())
+        self.ref_date_time = None
 
         # Set the studdy case to none by default
         self.study_case = None
@@ -53,8 +55,22 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         # Set the command object to none as default
         self.command = None
 
-    #def init(self, sid, project_name , step_size = None, study_case = None, ref_date_time = None):
-    def init(self, sid, project_name , options = None):
+    def init(self, sid, project_name , options = None): # pylint: disable=W0221
+        """ Init method for the Mosaik interface
+
+        Activates the given project and set the options to the simulator
+
+        Args:
+            sid: The simulator sid
+            project_name: The name of the PowerFactory project which the
+                simulator should use
+            options: A dictionary of optional options for the simulator.
+                Possible keys are: step_size, ref_date_time, study_case
+
+        Returns:
+            The meta dictionary of the simulator
+
+        """
         del sid
 
         # Set the Simulation Options
@@ -81,75 +97,89 @@ class PowerFactorySimulator(mosaik_api.Simulator):
                 case = cases[0]
                 case.Activate()
 
-        # Set the ref_date_time to the study case
-        self._set_case_time(0)
+
+        # Sync the ref_case_time
+        if self.ref_date_time is None:
+            self.ref_date_time = self._get_case_time()
+        else:
+            self._set_case_time(0)
 
         # Get the calculation commend
         self._get_command()
 
 
+        # Extend the META dict with all relevant Models
+        models = self.pf.relevant_models()
+        for model in models:
+            attrs =  powerfactory_tools.attributes_for_model(model)
+            if model == 'ElmNet':
+                self.meta['models'][model]['attrs'] = attrs
+            else:
+                self.meta['models'][model] = {
+                    'public': False,
+                    'params': [],
+                    'attrs': attrs,
+                    }
 
         # this methode has to return the meta dict
         return self.meta #pylint: disable=E1101
 
 
-    def elements_of_model(self, model, name="*"):
-        if self.pf.GetActiveProject is None:
-            raise Exception("You have to init the simulator first")
-        return self.pf.GetCalcRelevantObjects('%s.%s' % (name, model),1,1)
 
-    def element_with_eid(self,eid):
-        if self.pf.GetActiveProject is None:
-            raise Exception("You have to init the simulator first")
-        element =  self.pf.GetCalcRelevantObjects(eid,1,1)
-        if not element:
-            raise Exception("No element with eid: %s" % eid)
-        if len(element) > 1:
-            raise Exception("Found more of one element with eid: %s" % eid)
+    def create(self, num, model, loc_name): # pylint: disable=W0221
+        """ Create Methods for the mosiak api
 
-        return element[0]
+        Map entities within the PowerFactory Modell to Mosaik. It is only allowed
+        to create a ElmNet Modell. Within the ElmNet enitity all relevant
+        objects are added as children.
 
+        Args:
+            num: Number of entities to map. It has to be one
+            model: The name of the model to map. It has to be 'ElmNet'
+            loc_name: The name of the ElmNet to map
 
-    def num_elements_of_model(self, model, name="*"):
-        return len(self.elements_of_model(model, name))
+        Returns:
+            The created entities
+        """
 
-
-    def create(self, num, model, loc_name):
 
         entities = []
+        children_entities = []
 
-        # Get the elements name from powerfactory
-        elements = self.elements_of_model(model,loc_name)
+        if model != 'ElmNet':
+            raise Exception("You can only create a ElmNet Modell")
 
-        # Errors:
-        if elements is None:
-            raise Exception("There is no model with the name %s.%s in your PowerFactory Model" % (loc_name,model))
+        # Get the gird and all its content
+        grid = self.pf.get_grid(loc_name)
+        children = grid.children_elements()
 
-        if num != len(elements):
-            raise Exception("The number of models have to be the equal the models in your PowerFactor Model")
+        # Create entities for all grid elements
+        for child in children:
+            children_entities.append({'eid': child.unique_name(),'type': child.GetClassName()})
 
-        # Mapping Elements for Mosaik
-        for e in elements:
-            eid = '%s.%s' % (e.loc_name, model)
-            entities.append({'eid': eid, 'type': model})
-
+        # Createa the gird entitie
+        entities.append({'eid': grid.unique_name(), 'type': model, 'children': children_entities})
         return entities
 
 
     def step(self, mosaik_time, inputs):
-        # Input could look like this
-        # {
-        #     'Load1.ElmLod': {
-        #         'plini': {'src_eid_0': 1},
-        #     },
-        #     'Load2.ElmLod':
-        #         'plini': {'src_eid_1': 2},
-        #     },
-        # }
+        """ Step methods for the mosaik api
+
+        It will set the inputs to the entities. And run one simulation step
+
+        Args:
+            mosaik_time: The relative simulation time in secounds
+            inputs: The inputs to the elements
+
+        Returns:
+            The next relative simulation time
+
+        """
+
         for eid, attrs in inputs.items():
 
             # Get PF element
-            element = self.element_with_eid(eid)
+            element = self.pf.element_with_unique_name(eid)
 
             # Set the attribes of the elements
             for attr, sources in attrs.items():
@@ -162,6 +192,18 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         return mosaik_time + self.step_size
 
     def get_data(self, outputs):
+        """ Get_date method of the mosaik api
+
+        It returns the requestet data
+
+        Args:
+            outputs: Dict of eids and attributes to output
+
+        Returns:
+            A dict of eids, attributes and corresponding values
+
+        """
+
         # The outputs parameter can look like this
         # {
         #     'Load1.ElmLod': ['plini'],
@@ -173,7 +215,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         # Loop over the entity id for requested data
         for eid, attrs in outputs.items():
             # Get the element from the eid
-            element = self.element_with_eid(eid)
+            element = self.pf.element_with_unique_name(eid)
             data[eid] = {}
             # Loop over the requested attributes
             for attr in attrs:
@@ -182,7 +224,32 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
         return data
 
+
+    def finalize(self):
+        """ Finalize mehtode of the Simulator
+
+        Finalize the simulator. It reset the case time in power factory to the
+        ref_case_time
+
+        """
+        # Reset the case time in PowerFacotory
+        self._set_case_time(0)
+
+
     def _set_case_time(self,mosaik_time):
+        """ Private Mehtode to set the case time in PowerFactory
+
+        It set the case time in PowerFacotory to the given relavtive simulation
+        and the ref_date_time
+
+        Args:
+            mosaik_time: the current relative simualation time
+
+        Returns:
+            None
+
+        """
+
         # Get the study case
         case = self.pf.GetActiveStudyCase()
         # Calculate the resulting date
@@ -191,53 +258,29 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         case.SetStudyTime(dt.float_timestamp)
 
 
+    def _get_case_time(self):
+        """ Private Mehtode to get the case time from PowerFactory
+
+        Returns the study case time of PowerFactory
+
+        Returns:
+            arrow.Arrow object with the study case time
+
+        """
+        #Get the study case
+        case = self.pf.GatActiveStudyCase()
+        dt_float = case.GetAttribute('iStudyTime')
+        return arrow.get(dt_float).to('local')
+
+
     @abc.abstractmethod
     def _run_step(self,mosaik_time):
+        """Abtract method to run one simulation step in PowerFactory
+        """
         return
 
     @abc.abstractmethod
     def _get_command(self):
+        """Abtract method to get the Command Object form PowerFactory
+        """
         return
-
-
-class PowerFacotryLDFSimulator(PowerFactorySimulator):
-    def __init__(self):
-        # Init the super method
-        super().__init__()
-
-        # Set the default step sizes
-        self.step_size = 900 #s
-
-        # Set the LDF Options
-        self.ldf_options = {
-            "iopt_net" : 0,
-        }
-
-    def init(self, sid, project_name , options = None): #pylint: disable=W0221
-        super().init(sid,project_name,options)
-
-        # Set the ldf options in the study case
-        for attr, value in self.ldf_options.items():
-            self.command.SetAttribute(attr,value)
-
-        return self.meta #pylint: disable=E1101
-
-    def _get_command(self):
-        self.command = self.pf.GetFromStudyCase("ComLdf")
-        return self.command
-
-    def _run_step(self,mosaik_time):
-        # Set the time in the study case
-        self._set_case_time(mosaik_time)
-        #execute load flow
-        self.command.Execute()
-
-
-
-# Make it executable
-def main():
-    return mosaik_api.start_simulation(PowerFacotryLDFSimulator())
-
-
-if __name__ == '__main__':
-    main()
