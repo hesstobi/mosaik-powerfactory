@@ -1,7 +1,7 @@
 from mosaik_powerfactory import PowerFactorySimulator
 import mosaik_api
 
-class PowerFacotryLDFSimulator(PowerFactorySimulator):
+class PowerFactoryLDFSimulator(PowerFactorySimulator):
     def __init__(self):
         """Constructor of the PowerFactorySimulator
 
@@ -76,7 +76,7 @@ class PowerFacotryLDFSimulator(PowerFactorySimulator):
 
 # Make it executable
 def main():
-    return mosaik_api.start_simulation(PowerFacotryLDFSimulator())
+    return mosaik_api.start_simulation(PowerFactoryLDFSimulator())
 
 
 if __name__ == '__main__':
