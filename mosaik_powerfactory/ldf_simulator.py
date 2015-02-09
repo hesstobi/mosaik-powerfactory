@@ -1,4 +1,4 @@
-import mosaik_powerfactory
+from mosaik_powerfactory import PowerFactorySimulator
 import mosaik_api
 
 class PowerFacotryLDFSimulator(PowerFactorySimulator):

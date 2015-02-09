@@ -1,6 +1,6 @@
 # mosaik_powerfacoty.py
 
-import powerfactory_tools
+from mosaik_powerfactory import powerfactory_tools
 import powerfactory
 import mosaik_api
 
