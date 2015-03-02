@@ -50,13 +50,22 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.step_size = 1 #s
 
         # Set the default referenze time
-        self.ref_date_time = None
+        self._ref_date_time = None
 
         # Set the studdy case to none by default
         self.study_case = None
 
         # Set the command object to none as default
         self.command = None
+
+    @property
+    def ref_date_time(self):
+        return self._ref_date_time
+
+    @ref_date_time.setter
+    def ref_date_time(self,value):
+        self._ref_date_time = arrow.get(value)
+
 
     def init(self, sid, project_name , options = None): # pylint: disable=W0221
         """ Init method for the Mosaik interface
