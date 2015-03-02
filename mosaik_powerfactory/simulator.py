@@ -272,7 +272,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
 
         """
         #Get the study case
-        case = self.pf.GatActiveStudyCase()
+        case = self.pf.GetActiveStudyCase()
         dt_float = case.GetAttribute('iStudyTime')
         return arrow.get(dt_float).to('local')
 
