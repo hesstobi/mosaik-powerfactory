@@ -6,6 +6,9 @@ import mosaik_api
 
 import arrow
 import abc
+import logging
+
+logger = logging.getLogger('powerfactory.mosaik')
 
 META = {
     'models': {
@@ -107,6 +110,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         # Get the calculation commend
         self._get_command()
 
+        logger.debug("Simulation will be done on project: %s with study case: %s and reference date: %s",project_name, self.study_case, self.ref_date_time)
 
         # Extend the META dict with all relevant Models
         models = self.pf.relevant_models()
