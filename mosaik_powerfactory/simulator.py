@@ -87,7 +87,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             raise Exception("You have to provide the project_name for PowerFactory")
         self.pf.ActivateProject(project_name)
 
-        # Activate the study cae
+        # Activate the study case
         if self.study_case is None:
             # If there is no study_case given get the current study case
             case = self.pf.GetActiveStudyCase()
