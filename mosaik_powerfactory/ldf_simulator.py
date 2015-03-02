@@ -71,6 +71,7 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
         mosaik and executes a load_flow calculation
 
         """
+
         # Set the time in the study case
         self._set_case_time(mosaik_time)
         #execute load flow
@@ -81,7 +82,3 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
 # Make it executable
 def main():
     return mosaik_api.start_simulation(PowerFactoryLDFSimulator())
-
-
-if __name__ == '__main__':
-    main()
