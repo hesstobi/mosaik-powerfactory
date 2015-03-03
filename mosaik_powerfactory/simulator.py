@@ -3,6 +3,7 @@
 from mosaik_powerfactory import powerfactory_tools
 import powerfactory
 import mosaik_api
+import mosaik.exceptions
 
 import arrow
 import abc
@@ -233,7 +234,11 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             # Loop over the requested attributes
             for attr in attrs:
                 # Get the attribute of the element
-                data[eid][attr] = element.GetAttribute(attr)
+                try:
+                    data[eid][attr] = element.GetAttribute(attr)
+                except AttributeError:
+                    logger.error("Element %s has no Attribute %s, replacing the value with NaN",eid,attr)
+                    data[eid][attr] = float('nan')
 
         return data
 
