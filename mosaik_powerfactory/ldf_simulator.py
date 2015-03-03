@@ -77,8 +77,6 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
         self._set_case_time(mosaik_time)
         #execute load flow
         result = self.command.Execute()
-        import pdb; pdb.set_trace()
-
         if result is not 0:
             logger.error('Calculation %s failed',self.command.loc_name)
             raise mosaik.exceptions.SimulationError("Calculation of loadflow failed")
