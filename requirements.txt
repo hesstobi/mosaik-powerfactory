@@ -1,5 +1,6 @@
 mosaik-api==2.1
 mosaik==2.1.2
 arrow==0.4.6
-simpy==3.0.5 
+simpy==3.0.7
+-e hg+https://bitbucket.org/thess/mosaik-csv#egg=mosaik-csv
 -e .
