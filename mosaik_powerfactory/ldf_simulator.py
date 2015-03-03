@@ -1,5 +1,6 @@
 from mosaik_powerfactory import PowerFactorySimulator
 import mosaik_api
+import mosaik.exceptions
 import logging
 
 logger = logging.getLogger('powerfactory.mosaik')
@@ -75,7 +76,12 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
         # Set the time in the study case
         self._set_case_time(mosaik_time)
         #execute load flow
-        self.command.Execute()
+        result = self.command.Execute()
+        import pdb; pdb.set_trace()
+
+        if result is not 0:
+            logger.error('Calculation %s failed',self.command.loc_name)
+            raise mosaik.exceptions.SimulationError("Calculation of loadflow failed")
 
 
 
