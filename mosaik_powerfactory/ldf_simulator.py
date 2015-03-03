@@ -46,7 +46,7 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
         """
         super().init(sid,project_name,options)
 
-        logger.debug('Load flow will be calculated every %d secounds' % self.step_size)
+        logger.debug('Load flow will be calculated every %d secounds',self.step_size)
 
         # Set the ldf options in the study case
         for attr, value in self.ldf_options.items():
