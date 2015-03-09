@@ -1,28 +1,22 @@
-.. mosaik-powerfactory documentation master file, created by
-   sphinx-quickstart on Mon Feb  9 16:47:59 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+mosaik-powerfactory's documentation!
+====================================
 
-Welcome to mosaik-powerfactory's documentation!
-===============================================
+.. include:: ..\README.rst
+   :start-line: 1
+   :end-line: 7
 
-Contents:
 
 .. toctree::
-   :maxdepth: 2
+  :maxdepth: 2
 
-
-API Reference
-=============
-
-.. toctree::
-   :maxdepth: 2
-
-   source/modules
+  readme
+  demo/index
+  source/api
+  changes
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

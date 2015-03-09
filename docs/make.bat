@@ -60,6 +60,8 @@ if errorlevel 9009 (
 	exit /b 1
 )
 
+sphinx-apidoc -f -o source ../mosaik_powerfactory/
+
 if "%1" == "html" (
 	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
 	if errorlevel 1 exit /b 1
