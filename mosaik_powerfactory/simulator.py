@@ -1,6 +1,6 @@
 # mosaik_powerfacoty.py
 
-from mosaik_powerfactory import powerfactory_tools
+import mosaik_powerfactory.powerfactory_tools as pftools
 import powerfactory
 import mosaik_api
 import mosaik.exceptions
@@ -125,7 +125,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         # Extend the META dict with all relevant Models
         models = self.pf.relevant_models()
         for model in models:
-            attrs =  powerfactory_tools.attributes_for_model(model)
+            attrs =  pftools.attributes_for_model(model)
             if model == 'ElmNet':
                 self.meta['models'][model]['attrs'] = attrs
             else:
