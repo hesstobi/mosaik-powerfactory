@@ -57,7 +57,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.study_case = None
 
         # Set the command object to none as default
-        self.command = None
+        self._command = None
 
     @property
     def ref_date_time(self):
