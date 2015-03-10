@@ -90,6 +90,12 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         if options is not None:
             for attr,value in options.items():
                 if value is not None:
+                    # If the option is a dictionary do not replace it, update it
+                    if isinstance(getattr(self,attr),dict):
+                        oldvalue = getattr(self,attr)
+                        oldvalue.update(value)
+                        value = oldvalue
+
                     setattr(self,attr,value)
 
         # Activate project in powerfactory
