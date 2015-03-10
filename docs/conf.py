@@ -34,7 +34,13 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
     'sphinxcontrib.napoleon',
+    'releases'
 ]
+
+# 'releases' (changelog) settings
+releases_issue_uri = "https://gitlab.evieeh.local/tobias.hess/mosaik-powerfactory/issues/%s"
+releases_release_uri = "https://gitlab.evieeh.local/tobias.hess/mosaik-powerfactory/tags#v%s"
+releases_document_name = "changes"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
