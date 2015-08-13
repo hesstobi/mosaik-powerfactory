@@ -19,7 +19,8 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'mosaik-powerfactory-ldf = mosaik_powerfactory.ldf_simulator:main'
+            'mosaik-powerfactory-ldf = mosaik_powerfactory.ldf_simulator:main',
+            'mosaik-powerfactory-rms = mosaik_powerfactory.rms_simulator:main'
         ],
     },
     classifiers=[
