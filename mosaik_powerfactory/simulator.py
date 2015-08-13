@@ -6,7 +6,6 @@ import mosaik_api
 import mosaik.exceptions
 
 import arrow
-import abc
 import logging
 
 logger = logging.getLogger('powerfactory.mosaik')
@@ -23,12 +22,11 @@ META = {
 }
 
 class PowerFactorySimulator(mosaik_api.Simulator):
-    """Abstract Mosaik interface for Digisilent Powerfactory
+    """Base Mosaik interface for Digisilent Powerfactory
 
 
 
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         """Constructor of the PowerFactorySimulator
@@ -297,14 +295,12 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         return arrow.get(dt_float).to('local')
 
 
-    @abc.abstractmethod
     def _run_step(self,mosaik_time):
         """Abtract method to run one simulation step in PowerFactory
         """
-        return
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def _get_command(self):
         """Abtract method to get the Command Object form PowerFactory
         """
-        return
+        raise NotImplementedError
