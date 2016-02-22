@@ -52,7 +52,7 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
 
         # Set the ldf options in the study case
         for attr, value in self.ldf_options.items():
-            self.command.SetAttribute(attr,value)
+            self._command.SetAttribute(attr,value)
 
         return self.meta #pylint: disable=E1101
 
@@ -63,8 +63,8 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
             The powerfacotry.DataObejct with the commnad
 
         """
-        self.command = self.pf.GetFromStudyCase("ComLdf")
-        return self.command
+        self._command = self.pf.GetFromStudyCase("ComLdf")
+        return self._command
 
     def _run_step(self,mosaik_time):
         """Private method to run a simulation step
@@ -77,9 +77,9 @@ class PowerFactoryLDFSimulator(PowerFactorySimulator):
         # Set the time in the study case
         self._set_case_time(mosaik_time)
         #execute load flow
-        result = self.command.Execute()
+        result = self._command.Execute()
         if result is not 0:
-            logger.error('Calculation %s failed',self.command.loc_name)
+            logger.error('Calculation %s failed',self._command.loc_name)
             raise mosaik.exceptions.SimulationError("Calculation of loadflow failed")
 
 

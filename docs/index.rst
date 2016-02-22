@@ -11,7 +11,7 @@ mosaik-powerfactory's documentation!
 
   readme
   demo/index
-  source/api
+  api
   changes
 
 

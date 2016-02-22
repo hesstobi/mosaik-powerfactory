@@ -6,7 +6,6 @@ import mosaik_api
 import mosaik.exceptions
 
 import arrow
-import abc
 import logging
 
 logger = logging.getLogger('powerfactory.mosaik')
@@ -19,16 +18,15 @@ META = {
             'attrs': [],
         },
     },
-    'extra_methods': [],
+    'extra_methods': ['init_model_attributes'],
 }
 
 class PowerFactorySimulator(mosaik_api.Simulator):
-    """Abstract Mosaik interface for Digisilent Powerfactory
+    """Base Mosaik interface for Digisilent Powerfactory
 
 
 
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         """Constructor of the PowerFactorySimulator
@@ -46,6 +44,8 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.pf = powerfactory.GetApplication()
         if self.pf is None:
             raise Exception("Starting PowerFactory application in engine mode failed")
+        # Hide the app to imporve speed
+        self.pf.Hide()
 
         # Set the default step sizes
         self.step_size = 1 #s
@@ -57,7 +57,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.study_case = None
 
         # Set the command object to none as default
-        self.command = None
+        self._command = None
 
     @property
     def ref_date_time(self):
@@ -90,6 +90,12 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         if options is not None:
             for attr,value in options.items():
                 if value is not None:
+                    # If the option is a dictionary do not replace it, update it
+                    if isinstance(getattr(self,attr),dict):
+                        oldvalue = getattr(self,attr)
+                        oldvalue.update(value)
+                        value = oldvalue
+
                     setattr(self,attr,value)
 
         # Activate project in powerfactory
@@ -198,7 +204,8 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             # Set the attribes of the elements
             for attr, sources in attrs.items():
                 new_value = sum(sources.values()) # We not care about the sources
-                element.SetAttribute(attr,new_value)
+                if new_value != element.GetAttribute(attr):
+                    element.SetAttribute(attr,new_value)
 
         self._run_step(mosaik_time)
 
@@ -252,6 +259,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         """
         # Reset the case time in PowerFacotory
         self._set_case_time(0)
+        self.pf.Show()
 
 
     def _set_case_time(self,mosaik_time):
@@ -291,14 +299,22 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         return arrow.get(dt_float).to('local')
 
 
-    @abc.abstractmethod
     def _run_step(self,mosaik_time):
         """Abtract method to run one simulation step in PowerFactory
         """
-        return
+        raise NotImplementedError
 
-    @abc.abstractmethod
     def _get_command(self):
         """Abtract method to get the Command Object form PowerFactory
         """
-        return
+        raise NotImplementedError
+
+
+    def init_model_attributes(self,model,attrs):
+        elements = self.pf.elements_of_model(model)
+
+        for ele in elements:
+
+            # Set the attribes of the elements
+            for attr, value in attrs.items():
+                ele.SetAttribute(attr,value)
