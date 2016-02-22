@@ -14,7 +14,7 @@ preferably into a `virtualenv`__
 
 .. code-block:: bash
 
-    pip install -e git+https://github.com:hesstobi/mosaik-powerfactory.git#egg=mosaik-powerfacotry
+    pip install -e git+https://github.com/hesstobi/mosaik-powerfactory.git#egg=mosaik-powerfacotry
 
 
 __ http://pip.readthedocs.org/en/latest/installing.html
