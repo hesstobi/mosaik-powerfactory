@@ -18,7 +18,7 @@ META = {
             'attrs': [],
         },
     },
-    'extra_methods': [],
+    'extra_methods': ['init_model_attributes'],
 }
 
 class PowerFactorySimulator(mosaik_api.Simulator):
@@ -44,6 +44,8 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         self.pf = powerfactory.GetApplication()
         if self.pf is None:
             raise Exception("Starting PowerFactory application in engine mode failed")
+        # Hide the app to imporve speed
+        self.pf.Hide()
 
         # Set the default step sizes
         self.step_size = 1 #s
@@ -202,7 +204,8 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             # Set the attribes of the elements
             for attr, sources in attrs.items():
                 new_value = sum(sources.values()) # We not care about the sources
-                element.SetAttribute(attr,new_value)
+                if new_value != element.GetAttribute(attr):
+                    element.SetAttribute(attr,new_value)
 
         self._run_step(mosaik_time)
 
@@ -256,6 +259,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         """
         # Reset the case time in PowerFacotory
         self._set_case_time(0)
+        self.pf.Show()
 
 
     def _set_case_time(self,mosaik_time):
@@ -304,3 +308,13 @@ class PowerFactorySimulator(mosaik_api.Simulator):
         """Abtract method to get the Command Object form PowerFactory
         """
         raise NotImplementedError
+
+
+    def init_model_attributes(self,model,attrs):
+        elements = self.pf.elements_of_model(model)
+
+        for ele in elements:
+
+            # Set the attribes of the elements
+            for attr, value in attrs.items():
+                ele.SetAttribute(attr,value)

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mosaik-powerfactory',
-    version='0.1.0',
+    version='0.2.0',
     author='Tobias Hess',
     author_email='tobias.hess at tu-dresden.de',
     description=('An adapter ti use Digsilent PowerFacotry with mosiak'),
