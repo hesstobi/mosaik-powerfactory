@@ -1,9 +1,9 @@
 # Imports
 import sys
 import os
-POWERFACTORY_PATH = "C:\\Program Files\\DIgSILENT\\PowerFactory 15.2"
+POWERFACTORY_PATH = "C:\\Program Files\\DIgSILENT\\PowerFactory 2016"
 os.environ["PATH"] = POWERFACTORY_PATH + ";" + os.environ["PATH"]
-sys.path.append(POWERFACTORY_PATH + "\\python\\3.4")
+sys.path.append(POWERFACTORY_PATH + "\\python\\3.5")
 import powerfactory
 import re
 import json
