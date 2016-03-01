@@ -152,7 +152,7 @@ def element_with_unique_name(self,name):
     elements_names = name.split('\\')
     parrent = self.get_grid(elements_names[0])
     for e in elements_names[1:]:
-        parrent = parrent.GetContents(e)[0][0]
+        parrent = parrent.GetContents(e)[0]
     return parrent
 
 
@@ -194,7 +194,7 @@ def children_elements(self, name="*", model="Elm*"):
     Retruns:
         List of powerfactory.DataObject with the children of the object
     """
-    return self.GetContents("%s.%s" % (name, model),True)[0]
+    return self.GetContents("%s.%s" % (name, model),True)
 
 
 def attributes(self,attr_type=None):

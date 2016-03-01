@@ -46,6 +46,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             raise Exception("Starting PowerFactory application in engine mode failed")
         # Hide the app to imporve speed
         self.pf.Hide()
+        self.pf.EchoOff()
 
         # Set the default step sizes
         self.step_size = 1 #s
@@ -109,7 +110,7 @@ class PowerFactorySimulator(mosaik_api.Simulator):
             case = self.pf.GetActiveStudyCase()
             self.study_case = case.loc_name
         else:
-            cases = self.pf.GetProjectFolder('study').GetChildren(0,'%s.IntCase' % self.study_case)[0]
+            cases = self.pf.GetProjectFolder('study').GetChildren(0,'%s.IntCase' % self.study_case)
             if cases is None:
                 raise Exception("There is no study case with the name %s in your PowerFactory project" % self.study_case)
             else:

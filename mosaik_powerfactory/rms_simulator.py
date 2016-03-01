@@ -91,7 +91,7 @@ class PowerFactoryRMSSimulator(PowerFactorySimulator):
 
         # Get the event object end delete old mosaik events
         self._events = self.pf.GetFromStudyCase("IntEvt")
-        mosaik_events = self._events.GetChildren(0,'mosaik*')[0]
+        mosaik_events = self._events.GetChildren(0,'mosaik*')
         for event in mosaik_events:
             event.Delete()
 
@@ -137,7 +137,7 @@ class PowerFactoryRMSSimulator(PowerFactorySimulator):
             # Set the attribes of the elements
             for attr, sources in attrs.items():
                 new_value = sum(sources.values()) # We not care about the sources
-                event = self._events.CreateObject('EvtParam','mosaik')[0]
+                event = self._events.CreateObject('EvtParam','mosaik')
                 event.SetAttribute('p_target',element)
                 event.SetAttribute('hrtime',0)
                 event.SetAttribute('mtime',0)
