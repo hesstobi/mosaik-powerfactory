@@ -82,7 +82,7 @@ To read the full documentation of this project follow these steps:
 
 .. code-block:: bash
 
-    git clone https://gitlab.evieeh.local/tobias.hess/mosaik-powerfactory.git
+    git clone https://github.com/hesstobi/mosaik-powerfactory.git
     cd mosaik-powerfactory/docs
     make html
 
